@@ -1,7 +1,15 @@
+const db = require('../../data/db-config')
+
 const router = require('express').Router()
 
 router.get('/', async (req, res, next) => {
   // DO YOUR MAGIC
+  try {
+    const accounts = await db.select("*").from("accounts")
+    res.json(accounts)
+  } catch (err) {
+    next(err)
+  }
 })
 
 router.get('/:id', (req, res, next) => {
