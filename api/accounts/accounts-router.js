@@ -1,6 +1,7 @@
 
 const router = require('express').Router()
 const accounts = require('./accounts-model')
+const { checkAccountPayload } = require('./accounts-middleware')
 
 router.get('/', async (req, res, next) => {
   // DO YOUR MAGIC
@@ -22,7 +23,7 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/', checkAccountPayload, async (req, res, next) => {
   // DO YOUR MAGIC
   try {
     const result = await accounts.create(req.body)
@@ -32,12 +33,24 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', async (req, res, next) => {
   // DO YOUR MAGIC
+  try {
+    const result = await accounts.updateById(req.params.id, req.body)
+    res.json(result)
+  } catch (err) {
+    next(err)
+  }
 });
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   // DO YOUR MAGIC
+  try {
+    await accounts.deleteById(req.params.id)
+    res.status(204).end()
+  } catch (err) {
+    next(err)
+  }
 })
 
 router.use((err, req, res, next) => { // eslint-disable-line
