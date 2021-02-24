@@ -1,23 +1,35 @@
-const db = require('../../data/db-config')
 
 const router = require('express').Router()
+const accounts = require('./accounts-model')
 
 router.get('/', async (req, res, next) => {
   // DO YOUR MAGIC
   try {
-    const accounts = await db.select("*").from("accounts")
-    res.json(accounts)
+    const results = await accounts.getAll()
+    res.json(results)
   } catch (err) {
     next(err)
   }
 })
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   // DO YOUR MAGIC
+  try {
+    const result = await accounts.getById(req.params.id)
+    res.json(result)
+  } catch (err) {
+    next(err)
+  }
 })
 
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
   // DO YOUR MAGIC
+  try {
+    const result = await accounts.create(req.body)
+    res.json(result)
+  } catch (err) {
+    next(err)
+  }
 })
 
 router.put('/:id', (req, res, next) => {
