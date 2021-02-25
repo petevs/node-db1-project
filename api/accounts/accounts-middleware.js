@@ -45,11 +45,20 @@ exports.checkAccountNameUnique = async (req, res, next) => {
   // DO YOUR MAGIC
   try {
     const results = await accounts.getAll()
-    let currentName
-    if(req.params.id){
-      currentName = await accounts.getById(req.params.id)
-    }
     const names = results.map(account => account.name)
+    let previousName
+
+    //Check if account is being updated and whether name changed
+    if(req.params.id){
+      const result = await accounts.getById(req.params.id)
+      previousName = result.name
+    } 
+
+    if(previousName === req.body.name){
+      return next()
+    }
+
+    //If name is included in names and name 
     if(names.includes(req.body.name)){
       res.status(400).json({
         message: 'That name is taken'
